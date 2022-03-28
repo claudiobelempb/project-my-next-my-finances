@@ -1,0 +1,6 @@
+
+--tb_user
+INSERT INTO tb_user (code, first_name, last_name, birth, cpf, telephone, email, password, created_at, status, address) VALUES('461c6d79-b725-43d6-b121-b3940cfc194b', 'Alex', 'Brown', '1977-07-26', '023.564.856-00', '(83) 9991-26797', 'alex@gmail.com','$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG', now(), 0, 'Rua flavio Ribeiro, 192, Centro, Belém-PB');
+
+--Insert tb_product
+INSERT INTO tb_product (code, name, price, created_at, description, img_url, status) VALUES ('461c6d79-b725-43d6-b121-b3940cfc194b','The Lord of the Rings', 90.5, NOW(), 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg', 0);
