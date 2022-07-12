@@ -4,9 +4,7 @@ import br.com.surb.myfinances.modulos.user.infra.jpa.entities.User;
 import br.com.surb.myfinances.shared.enums.EnumStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.UUID;
 
 public class UserDTO {
   private Long id;
@@ -19,15 +17,17 @@ public class UserDTO {
   private String email;
   private String address;
   private String telephone;
-  private Instant createdAt;
-  private Instant updatedAt;
+  @JsonFormat(pattern = "dd/MM/yyyy")
+  private LocalDate createdAt;
+  @JsonFormat(pattern = "dd/MM/yyyy")
+  private LocalDate updatedAt;
   private EnumStatus status;
 
   public UserDTO(){}
 
   public UserDTO(Long id, String code, String firstName, LocalDate birth, String lastName, String cpf, String email,
                  String address,
-                 String telephone, Instant createdAt, Instant updatedAt, EnumStatus status) {
+                 String telephone, LocalDate createdAt, LocalDate updatedAt, EnumStatus status) {
     this.id = id;
     this.code = code;
     this.firstName = firstName;
@@ -129,19 +129,19 @@ public class UserDTO {
     this.telephone = telephone;
   }
 
-  public Instant getCreatedAt() {
+  public LocalDate getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Instant createdAt) {
+  public void setCreatedAt(LocalDate createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Instant getUpdatedAt() {
+  public LocalDate getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Instant updatedAt) {
+  public void setUpdatedAt(LocalDate updatedAt) {
     this.updatedAt = updatedAt;
   }
 

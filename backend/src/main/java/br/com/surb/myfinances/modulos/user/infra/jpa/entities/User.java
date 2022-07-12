@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.random.RandomGenerator;
 
 @Entity
 @Table(name = "tb_user")
@@ -34,11 +33,9 @@ public class User implements Serializable {
   private String telephone;
 
   private String password;
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-  private Instant createdAt;
+  private LocalDate createdAt;
 
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-  private Instant updatedAt;
+  private LocalDate updatedAt;
 
   private EnumStatus status;
 
@@ -48,8 +45,8 @@ public class User implements Serializable {
               String address,
               String telephone,
               String password,
-              Instant createdAt,
-              Instant updatedAt, EnumStatus status) {
+              LocalDate createdAt,
+              LocalDate updatedAt, EnumStatus status) {
     this.id = id;
     this.code = code;
     this.firstName = firstName;
@@ -160,19 +157,19 @@ public class User implements Serializable {
     this.password = password;
   }
 
-  public Instant getCreatedAt() {
+  public LocalDate getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Instant createdAt) {
+  public void setCreatedAt(LocalDate createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Instant getUpdatedAt() {
+  public LocalDate getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Instant updatedAt) {
+  public void setUpdatedAt(LocalDate updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -186,14 +183,14 @@ public class User implements Serializable {
 
   @PrePersist
   public void prePersist(){
-    createdAt = Instant.now();
+    setCreatedAt(LocalDate.now());
     status = EnumStatus.ENABLED;
     code = String.valueOf(UUID.randomUUID());
   }
 
   @PreUpdate
   public void preUpdate(){
-    updatedAt = Instant.now();
+    setUpdatedAt(LocalDate.now());
   }
 
   @Override

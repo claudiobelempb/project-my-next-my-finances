@@ -1,13 +1,7 @@
 import { useState } from 'react';
 
 import { Product } from '@/types/product';
-import {
-  FaRegEdit,
-  FaRegTrashAlt,
-  FaRegEye,
-  FaCheck,
-  FaTimes
-} from 'react-icons/fa';
+import { FaRegEdit, FaRegTrashAlt, FaRegEye, FaCheck, FaTimes } from 'react-icons/fa';
 import Link from 'next/link';
 import { formatDate } from 'app/utils/formtDate';
 import { formatPrice, formatValue } from 'app/utils/formatPrice';
@@ -20,31 +14,25 @@ type TableDashboardProps = {
 const TableDashboard: React.FC<TableDashboardProps> = ({
   products,
 
-  onDelete
+  onDelete,
 }) => {
   return (
-    <table className='table table-responsive'>
+    <table className="table table-responsive">
       <thead>
         <tr>
-          <th scope='col'>#</th>
-          <th scope='col'>Código</th>
-          <th scope='col'>Nome</th>
-          <th scope='col'>Preço</th>
-          <th scope='col'>Cadastro</th>
-          <th scope='col'></th>
+          <th scope="col">#</th>
+          <th scope="col">Código</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Preço</th>
+          <th scope="col">Cadastro</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
         {console.log('Products: ', products)}
-        {products.map(product => {
+        {products.map((product) => {
           console.log('Product ', product);
-          return (
-            <TableDashboardRow
-              key={product.id}
-              product={product}
-              onDelete={onDelete}
-            />
-          );
+          return <TableDashboardRow key={product.id} product={product} onDelete={onDelete} />;
         })}
       </tbody>
     </table>
@@ -56,10 +44,7 @@ type TableDashboardRowProps = {
   onDelete: (product: Product) => void;
 };
 
-const TableDashboardRow: React.FC<TableDashboardRowProps> = ({
-  product,
-  onDelete
-}) => {
+const TableDashboardRow: React.FC<TableDashboardRowProps> = ({ product, onDelete }) => {
   const [isDelete, setIsDelete] = useState<boolean>(false);
 
   const handleProductIsDelete = (product: Product) => {
@@ -75,7 +60,7 @@ const TableDashboardRow: React.FC<TableDashboardRowProps> = ({
 
   return (
     <tr>
-      <th scope='row'>{product.id}</th>
+      <th scope="row">{product.id}</th>
       <td>{product.code}</td>
       <td>{product.name}</td>
       <td>{formatPrice(parseFloat(product.price || ''))}</td>
@@ -83,33 +68,26 @@ const TableDashboardRow: React.FC<TableDashboardRowProps> = ({
       <th>
         {!isDelete && (
           <>
-            <Link href='/products/create'>
-              <a className='btn btn-sm'>
-                <FaRegEye className='text-info' />
+            <Link href="/products/create">
+              <a className="btn btn-sm">
+                <FaRegEye className="text-info" />
               </a>
             </Link>
             <Link href={`/products/create?id=${product.id}`}>
-              <a className='btn btn-sm'>
-                <FaRegEdit className='text-warning' />
+              <a className="btn btn-sm">
+                <FaRegEdit className="text-warning" />
               </a>
             </Link>
           </>
         )}
 
-        <button
-          className='btn btn-sm'
-          onClick={() => handleProductIsDelete(product)}
-        >
-          {isDelete ? (
-            <FaCheck className='text-success' />
-          ) : (
-            <FaRegTrashAlt className='text-danger' />
-          )}
+        <button className="btn btn-sm" onClick={() => handleProductIsDelete(product)}>
+          {isDelete ? <FaCheck className="text-success" /> : <FaRegTrashAlt className="text-danger" />}
         </button>
 
         {isDelete && (
-          <button className='btn btn-sm' onClick={handleProductNotDelete}>
-            <FaTimes className='text-danger' />
+          <button className="btn btn-sm" onClick={handleProductNotDelete}>
+            <FaTimes className="text-danger" />
           </button>
         )}
       </th>

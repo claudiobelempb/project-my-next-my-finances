@@ -1,5 +1,5 @@
-import { httpClient } from '@/http/index';
-import { Product } from '@/types/product';
+import { http } from '@/http/index';
+import { Product } from '@/types/product/Product';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 
@@ -8,7 +8,11 @@ const resourceUrl: string = '/api/products';
 const useCreateService = () => {
   const create = async (product: Product): Promise<Product> => {
     try {
-      const response: AxiosResponse<Product> = await httpClient.post<Product>(resourceUrl, product);
+      const response: AxiosResponse<Product> = await http({
+        method: 'POST',
+        url: `/api/users`,
+        data: product,
+      });
       toast.success('Produto cadastrado com sucesso!');
       return response.data;
     } catch {

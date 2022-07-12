@@ -5,52 +5,53 @@ import { useFormik } from 'formik';
 import { LayoutDashboard } from '@/components/LayoutDashboard';
 import { MainHeaderDashboard } from '@/components/LayoutDashboard/MainHeaderDashboard';
 
-import { User } from '@/types/user';
+import { User } from '@/types/user/User';
 import { FaChevronLeft } from 'react-icons/fa';
 import { InputDefault } from '@/common/InputDefault';
 import { ButtonDefault } from '@/common/ButtonDefault';
-import { randomString } from 'app/utils/random';
-import { maskCpf, maskDateBirth, maskPhone, maskToLowerCase, maskToUpperCase } from 'app/utils/mask';
+import { maskCpf, maskDateBirth, maskPhone } from 'app/utils/mask';
 import { useCreateUserService } from '@/services/user/create.service';
 import { useUpdateUserService } from '@/services/user/update.service';
+import { validUserSchema } from '../validationUserSchema';
 
 type CreateUserPageProps = {
   user: User;
   onSubmit: (user: User) => void;
 };
 
-const formScheme: User = {
-  id: '',
-  lastName: '',
-  firstName: '',
-  birth: '',
-  cpf: '',
-  email: '',
-  address: '',
-  password: '',
-  telephone: '',
-  createdAt: '',
-};
-
 const CreateUserPage: React.FC = () => {
   const [user, setUser] = useState<User>({});
 
+  const formScheme: User = {
+    id: '',
+    lastName: '',
+    firstName: '',
+    birth: '',
+    cpf: '',
+    email: '',
+    address: '',
+    password: '',
+    telephone: '',
+    createdAt: '',
+  };
+
   const onSubmit = (user: User) => {
     if (user.id) {
-      useUpdateUserService(user);
-      console.log('User: ', user);
-      console.log('User Formik: ', user);
+      useUpdateUserService(user.id, user);
+
+      // toast.success('User create com success!');
     } else {
       useCreateUserService(user);
-      console.log('User: ', user);
-      console.log('User Formik: ', user);
+      setUser({});
+      // console.log('User: ', user);
+      // console.log('User Formik: ', user);
     }
   };
 
   const formik = useFormik<User>({
     initialValues: { ...formScheme, ...user },
     onSubmit,
-    enableReinitialize: true,
+    validationSchema: validUserSchema,
   });
 
   return (
@@ -62,39 +63,21 @@ const CreateUserPage: React.FC = () => {
         </a>
       </Link>
       <h2 className="text-secondary">Created User</h2>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} className="needs-validation">
         <div className="row text-secondary">
-          {user.id && (
-            <>
-              <InputDefault type="text" id="id" value={formik.values.id} className={'col-6'} isDisabled />
-
-              <InputDefault type="text" id="createdAt" value={formik.values.createdAt} className={'col-6'} isDisabled />
-            </>
-          )}
-
-          {/* <InputDefault
-            type="text"
-            label="CÒDIGO: *"
-            placeholder={'Código'}
-            id="code"
-            name="code"
-            autoComplete="off"
-            // onChange={formik.handleChange}
-            value={formik.values.code}
-            className={'col-12'}
-            isDisabled
-          /> */}
-
           <InputDefault
             type="text"
             label="Nome: *"
             id="firstName"
             name="firstName"
-            autoComplete="off"
+            autoComplete=""
             onChange={formik.handleChange}
             value={formik.values.firstName}
             placeholder={'Nome'}
             className={'col-6'}
+            isInValid={formik.errors.firstName}
+            isValid={formik.values.firstName ? 0 : 1}
+            isMessageError={formik.errors.firstName}
           />
 
           <InputDefault
@@ -102,11 +85,14 @@ const CreateUserPage: React.FC = () => {
             label="Sobrenome: *"
             id="lastName"
             name="lastName"
-            autoComplete="off"
+            autoComplete=""
             value={formik.values.lastName}
             onChange={formik.handleChange}
             placeholder={'Sobrenome'}
             className={'col-6'}
+            isInValid={formik.errors.lastName}
+            isValid={formik.values.lastName ? 0 : 1}
+            isMessageError={formik.errors.lastName}
           />
 
           <InputDefault
@@ -114,11 +100,14 @@ const CreateUserPage: React.FC = () => {
             label="Data de nascimento: *"
             id="birth"
             name="birth"
-            autoComplete="off"
+            autoComplete=""
             value={maskDateBirth(`${formik.values.birth}`)}
             onChange={formik.handleChange}
             placeholder={'Data de nascimento'}
             className={'col-6'}
+            isInValid={formik.errors.birth}
+            isValid={formik.values.birth ? 0 : 1}
+            isMessageError={formik.errors.birth}
           />
 
           <InputDefault
@@ -126,11 +115,14 @@ const CreateUserPage: React.FC = () => {
             label="CPF: *"
             id="cpf"
             name="cpf"
-            autoComplete="off"
+            autoComplete=""
             value={maskCpf(`${formik.values.cpf}`)}
             onChange={formik.handleChange}
             placeholder={'CPF'}
             className={'col-6'}
+            isInValid={formik.errors.cpf}
+            isValid={formik.values.cpf ? 0 : 1}
+            isMessageError={formik.errors.cpf}
           />
 
           <InputDefault
@@ -138,22 +130,28 @@ const CreateUserPage: React.FC = () => {
             label="Telefone: *"
             id="telephone"
             name="telephone"
-            autoComplete="off"
+            autoComplete=""
             value={maskPhone(`${formik.values.telephone}`)}
             onChange={formik.handleChange}
             placeholder={'Telefone'}
             className={'col-6'}
+            isInValid={formik.errors.telephone}
+            isValid={formik.values.telephone ? 0 : 1}
+            isMessageError={formik.errors.telephone}
           />
           <InputDefault
             type="email"
             label="Email: *"
             id="email"
             name="email"
-            autoComplete="off"
+            autoComplete=""
             value={formik.values.email}
             onChange={formik.handleChange}
             placeholder={'email@example.com'}
             className={'col-6'}
+            isInValid={formik.errors.email}
+            isValid={formik.values.email ? 0 : 1}
+            isMessageError={formik.errors.email}
           />
 
           <InputDefault
@@ -161,11 +159,14 @@ const CreateUserPage: React.FC = () => {
             label="Endereço: *"
             id="address"
             name="address"
-            autoComplete="off"
+            autoComplete=""
             value={formik.values.address}
             onChange={formik.handleChange}
             placeholder={'Endereço'}
             className={'col-12'}
+            isInValid={formik.errors.address}
+            isValid={formik.values.address ? 0 : 1}
+            isMessageError={formik.errors.address}
           />
 
           <div className="d-grid gap-2 d-md-block py-3 ">

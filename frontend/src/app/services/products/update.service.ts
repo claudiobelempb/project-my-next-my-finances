@@ -1,14 +1,18 @@
-import { httpClient } from '@/http/index';
-import { Product } from '@/types/product';
+import { http } from '@/http/index';
+import { Product } from '@/types/product/Product';
+import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 
 const resourceUrl: string = '/api/products';
 
 const useUpdateService = () => {
-  const onUpdate = async (product: Product): Promise<void> => {
+  const onUpdate = async (id: string, product: Product): Promise<void> => {
     try {
-      const url: string = `${resourceUrl}/${product.id}`;
-      await httpClient.put<Product>(url, product);
+      const response: AxiosResponse<Product> = await http({
+        method: 'PUT',
+        url: `/api/users/${id}`,
+        data: product,
+      });
       toast.success('Produto atualizado com sucesso!');
     } catch {
       toast.error('Erro ao atulizar o produto');
@@ -16,7 +20,7 @@ const useUpdateService = () => {
   };
 
   return {
-    onUpdate
+    onUpdate,
   };
 };
 

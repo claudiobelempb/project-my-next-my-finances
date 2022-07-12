@@ -1,67 +1,82 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useFormik } from 'formik';
 
 import { LayoutDashboard } from '@/components/LayoutDashboard';
 import { MainHeaderDashboard } from '@/components/LayoutDashboard/MainHeaderDashboard';
 
-import { User } from '@/types/user';
+import { User } from '@/types/user/User';
 import { FaChevronLeft } from 'react-icons/fa';
-import { InputDefault } from '@/common/InputDefault';
-import { ButtonDefault } from '@/common/ButtonDefault';
-import { maskCpf, maskDateBirth, maskPhone } from 'app/utils/mask';
 import { useUpdateUserService } from '@/services/user/update.service';
 import { useRouter } from 'next/router';
 import { useFindByIdUseService } from '@/services/user/findById.service';
+import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
+import { useForm } from 'react-hook-form';
+import { FIELD_MESSAGE, FIELD_MESSAGE_EMAIL } from '../../../../app/contants';
+import { useUserFindById } from 'hooks/users/useUserFindByid';
+import axios from 'axios';
 
-type CreateUserPageProps = {
-  user: User;
-  onSubmit: (user: User) => void;
+type TypeFormInput = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  birth: string;
+  cpf: string;
+  email: string;
+  address: string;
+  password: string;
+  telephone: string;
+  createdAt: string;
 };
 
 const UpdateUserPage: React.FC = () => {
-  const [user, setUser] = useState<User>();
-  // const [id, setId] = useState<string>('');
+  const [user, setUser] = useState<TypeFormInput>();
+  const [redirect, setRedirect] = useState<boolean>(false);
 
-  const formScheme: User = {
-    code: `${user?.code}`,
-    lastName: '',
-    firstName: '',
-    birth: '',
-    cpf: '',
-    email: '',
-    address: '',
-    password: '',
-    telephone: '',
-    createdAt: `${user?.createdAt}`,
-  };
+  const { register, getValues } = useForm<TypeFormInput>();
 
   const router = useRouter();
-  const { id: userID } = router.query;
+  const { id } = router.query;
 
-  const onSubmit = (user: User) => {
-    useUpdateUserService(user);
+  const onSubmit = () => {
+    useUpdateUserService(`${id}`, user!)
+      .then((response) => {
+        console.log('Update response: ', response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  const formik = useFormik<User>({
-    initialValues: { ...formScheme, ...user },
-    onSubmit,
-    enableReinitialize: true,
-  });
+  const onFinish = (values: TypeFormInput) => {
+    const newValue = values;
+
+    console.log('Success:', user);
+  };
+
+  const onFinishFailed = (errorInfo: any) => {
+    console.log('Failed:', errorInfo);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUser((pre) => {
+      if (pre) {
+        return { ...pre, [name]: value };
+      }
+    });
+  };
 
   useEffect(() => {
-    if (!userID) {
-      useFindByIdUseService(userID || '').then((response) => {
-        // console.log(response.content || []);
-        response.content.map((result) => {
-          setUser(result);
-        });
-      });
-
-      // const newList: User[] = users.filter((user) => user.id !== user.id);
-      // setUsers(newList);
-    }
-  }, []);
+    (async () => {
+      try {
+        const result = await axios.get<TypeFormInput>(`http://localhost:8080/api/users/1`);
+        console.log(result.data);
+        setUser(result.data);
+      } catch (error) {
+        setRedirect(true);
+      }
+    })();
+  }, [id]);
 
   return (
     <LayoutDashboard title="Update User">
@@ -72,140 +87,69 @@ const UpdateUserPage: React.FC = () => {
         </a>
       </Link>
       <h2 className="text-secondary">Update User</h2>
-      <form onSubmit={formik.handleSubmit}>
-        <div className="row text-secondary">
-          <>
-            <InputDefault type="text" id="id" value={formik.values.code} className={'col-6'} isDisabled />
+      <Form onFinish={onFinish} onFinishFailed={onFinishFailed} layout={'vertical'} autoComplete="off">
+        <Row gutter={4}>
+          <Col span={12}>
+            <pre>ID: {user?.id}</pre>
+          </Col>
+          <Col span={12}>
+            <pre>Data Cadastro: {user?.createdAt}</pre>
+          </Col>
+        </Row>
 
-            <InputDefault type="text" id="createdAt" value={formik.values.createdAt} className={'col-6'} isDisabled />
-          </>
+        <Row gutter={4}>
+          <Col span={12}>
+            <Form.Item label="Nome">
+              <Input name={'firstName'} type={'text'} onChange={handleChange} value={user?.firstName} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="Sobrenome:">
+              <Input name={'lastName'} type={'text'} onChange={handleChange} value={user?.lastName} />
+            </Form.Item>
+          </Col>
+        </Row>
 
-          {/* <InputDefault
-            type="text"
-            label="CÒDIGO: *"
-            placeholder={'Código'}
-            id="code"
-            name="code"
-            autoComplete="off"
-            // onChange={formik.handleChange}
-            value={formik.values.code}
-            className={'col-12'}
-            isDisabled
-          /> */}
+        <Row gutter={4}>
+          <Col span={12}>
+            <Form.Item label="Data de nascimento:">
+              <Input name={'birth'} type={'date'} onChange={handleChange} value={user?.birth} />
+              <DatePicker picker="date" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="CPF:">
+              <Input name={'cpf'} type={'text'} onChange={handleChange} value={user?.cpf} />
+            </Form.Item>
+          </Col>
+        </Row>
 
-          <InputDefault
-            type="text"
-            label="Nome: *"
-            id="firstName"
-            name="firstName"
-            autoComplete="off"
-            onChange={formik.handleChange}
-            value={formik.values.firstName}
-            placeholder={'Nome'}
-            className={'col-6'}
-          />
+        <Row gutter={4}>
+          <Col span={12}>
+            <Form.Item label="Email:">
+              <Input name={'email'} type={'text'} onChange={handleChange} value={user?.email} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="Telefone:">
+              <Input name={'telephone'} type={'tel'} onChange={handleChange} value={user?.telephone} />
+            </Form.Item>
+          </Col>
+        </Row>
 
-          <InputDefault
-            type="text"
-            label="Sobrenome: *"
-            id="lastName"
-            name="lastName"
-            autoComplete="off"
-            value={formik.values.lastName}
-            onChange={formik.handleChange}
-            placeholder={'Sobrenome'}
-            className={'col-6'}
-          />
+        <Form.Item label="Endereço:">
+          <Input name={'address'} type={'text'} onChange={handleChange} value={user?.address} />
+        </Form.Item>
 
-          <InputDefault
-            type="text"
-            label="Data de nascimento: *"
-            id="birth"
-            name="birth"
-            autoComplete="off"
-            value={maskDateBirth(`${formik.values.birth}`)}
-            onChange={formik.handleChange}
-            placeholder={'Data de nascimento'}
-            className={'col-6'}
-          />
-
-          <InputDefault
-            type="text"
-            label="CPF: *"
-            id="cpf"
-            name="cpf"
-            autoComplete="off"
-            value={maskCpf(`${formik.values.cpf}`)}
-            onChange={formik.handleChange}
-            placeholder={'CPF'}
-            className={'col-6'}
-          />
-
-          <InputDefault
-            type="telephone"
-            label="Telefone: *"
-            id="telephone"
-            name="telephone"
-            autoComplete="off"
-            value={maskPhone(`${formik.values.telephone}`)}
-            onChange={formik.handleChange}
-            placeholder={'Telefone'}
-            className={'col-6'}
-          />
-          <InputDefault
-            type="email"
-            label="Email: *"
-            id="email"
-            name="email"
-            autoComplete="off"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            placeholder={'email@example.com'}
-            className={'col-6'}
-          />
-
-          <InputDefault
-            type="address"
-            label="Endereço: *"
-            id="address"
-            name="address"
-            autoComplete="off"
-            value={formik.values.address}
-            onChange={formik.handleChange}
-            placeholder={'Endereço'}
-            className={'col-12'}
-          />
-
-          <div className="d-grid gap-2 d-md-block py-3 ">
-            {userID ? (
-              <ButtonDefault
-                label="Editar"
-                className="btn"
-                background={'btn-success'}
-                color={'text-white'}
-                buttonType="submit"
-              />
-            ) : (
-              <ButtonDefault
-                label="Salvar"
-                className="btn"
-                background={'btn-success'}
-                color={'text-white'}
-                buttonType="submit"
-              />
-            )}
-
-            <ButtonDefault
-              href="/users"
-              buttonType="link"
-              className="ms-md-3"
-              background="btn-danger"
-              color="text-white"
-              label="Cancelar"
-            />
-          </div>
-        </div>
-      </form>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Editar
+          </Button>
+          <Button href="/users" className="ms-md-3" color="text-white" type="primary" danger>
+            Cancelar
+          </Button>
+        </Form.Item>
+      </Form>
     </LayoutDashboard>
   );
 };

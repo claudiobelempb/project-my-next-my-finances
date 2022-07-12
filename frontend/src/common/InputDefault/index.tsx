@@ -1,7 +1,8 @@
-import { ChangeEvent, FormHTMLAttributes, ReactNode, useState } from 'react';
+import { ChangeEvent, FormEvent, FormHTMLAttributes, ReactNode, useState } from 'react';
 import { InputHTMLAttributes } from 'react';
-import { InputOption } from '@/types/options';
-import { Border, BorderColor, BorderRadius, BorderSizes, BorderWidth } from '@/types/border';
+import { InputOption } from '@/types/Options';
+import { Border, BorderColor, BorderRadius, BorderSizes, BorderWidth } from '@/types/Border';
+import { toast } from 'react-toastify';
 
 export interface InputDefaultProps
   extends InputHTMLAttributes<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> {
@@ -17,6 +18,9 @@ export interface InputDefaultProps
   isBorder?: Border | BorderWidth | BorderSizes | BorderRadius | BorderColor;
   children?: ReactNode;
   formatter?: (value: string) => string;
+  isInValid?: string;
+  isValid?: number;
+  isMessageError?: string;
 }
 
 const InputDefault: React.FC<InputDefaultProps> = ({
@@ -32,6 +36,10 @@ const InputDefault: React.FC<InputDefaultProps> = ({
   isBorder,
   children,
   formatter,
+  isInValid,
+  isValid,
+  isMessageError,
+
   ...props
 }) => {
   switch (inputType) {
@@ -82,7 +90,9 @@ const InputDefault: React.FC<InputDefaultProps> = ({
           <input
             {...props}
             id={id}
-            className={`form-control ${sizing} ${isBorder}`}
+            className={`form-control ${isValid ? isValid : 'is-valid'} ${
+              !isInValid ? isInValid : 'is-invalid'
+            } ${sizing} ${isBorder}`}
             aria-label={id}
             disabled={isDisabled}
             readOnly={isReadonly}
@@ -90,6 +100,7 @@ const InputDefault: React.FC<InputDefaultProps> = ({
             onChange={props.onChange}
           />
           {children}
+          {isInValid && <div className={isInValid ? 'invalid-feedback' : 'valid-feedback'}>{isMessageError}</div>}
         </div>
       );
   }

@@ -1,16 +1,16 @@
-import { httpClient } from '@/http/index';
-import { Product } from '@/types/product';
+import { http } from '@/http/index';
+import { Product } from '@/types/product/Product';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
-
-const resourceUrl: string = '/api/products';
 
 const useFindAllService = () => {
   const findAll = async (product: Product): Promise<Product> => {
     try {
-      const response: AxiosResponse<Product> = await httpClient.get<Product>(
-        resourceUrl
-      );
+      const response: AxiosResponse<Product> = await http({
+        method: 'GET',
+        url: `/api/users`,
+        data: product,
+      });
       console.log(response.data);
       return response.data;
     } catch {
@@ -20,7 +20,7 @@ const useFindAllService = () => {
   };
 
   return {
-    findAll
+    findAll,
   };
 };
 

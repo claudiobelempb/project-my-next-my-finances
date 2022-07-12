@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 
 import 'react-toastify/dist/ReactToastify.css';
+import '../assets/styles/antd.dark-theme.less';
 import '@/styles/custom.scss';
 
 import { ToastContainer } from 'react-toastify';

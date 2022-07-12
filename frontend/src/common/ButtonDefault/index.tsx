@@ -1,5 +1,5 @@
 import { Background } from 'app/types/backgrounds';
-import { Color } from '@/types/colors';
+import { Color } from '@/types/Colors';
 import Link from 'next/link';
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 
